@@ -1,11 +1,11 @@
 ---
 // Edita aquí los equipos: título y color
 const equipos = [
-  { titulo: "Leones", color: "#e63946" },
-  { titulo: "Delfines", color: "#1d7bd8" },
-  { titulo: "Ranas", color: "#2a9d3f" },
-  { titulo: "Abejas", color: "#f4b400" },
-  { titulo: "Pulpos", color: "#8e44ad" },
+  { titulo: "Texto argumentativo", color: "#e63946" },
+  { titulo: "Texto expositivo", color: "#1d7bd8" },
+  { titulo: "Texto descriptivo", color: "#2a9d3f" },
+  { titulo: "Texto narrativo", color: "#f4b400" },
+  { titulo: "Texto instructivo", color: "#f57c00" },
 ];
 ---
 <html lang="es">
@@ -58,7 +58,7 @@ const equipos = [
         padding: 16px;
       }
       #pantalla[hidden] { display: none; }
-      #titulo { font-size: clamp(2.5rem, 13vw, 6rem); overflow-wrap: anywhere; }
+      #titulo { font-size: clamp(2rem, 10vw, 5rem); line-height: 1.1; overflow-wrap: break-word; }
       #volver {
         position: absolute;
         top: max(16px, env(safe-area-inset-top));
