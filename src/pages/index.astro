@@ -33,7 +33,7 @@ const equipos = [
         cursor: pointer;
         -webkit-tap-highlight-color: transparent;
       }
-      main button {
+      main.entra button {
         animation: entra .5s cubic-bezier(.34,1.56,.64,1) both;
         animation-delay: calc(var(--i) * 80ms);
         transition: transform .15s;
@@ -42,6 +42,8 @@ const equipos = [
       #pantalla:not([hidden]) { animation: abre .35s ease-out; }
       #pantalla:not([hidden]) #titulo { animation: pop .6s .15s cubic-bezier(.34,1.56,.64,1) both, flota 2.5s 1s ease-in-out infinite; }
       @keyframes entra { from { opacity: 0; transform: translateY(40px) scale(.9); } }
+      #pantalla.cerrando { animation: cierra .4s ease-in forwards; }
+      @keyframes cierra { from { clip-path: circle(150% at var(--x, 50%) var(--y, 50%)); } to { clip-path: circle(0 at var(--x, 50%) var(--y, 50%)); } }
       @keyframes abre { from { clip-path: circle(0 at var(--x, 50%) var(--y, 50%)); } to { clip-path: circle(150% at var(--x, 50%) var(--y, 50%)); } }
       @keyframes pop { from { opacity: 0; transform: scale(.3) rotate(-8deg); } }
       @keyframes flota { 50% { transform: translateY(-10px) scale(1.04); } }
@@ -71,7 +73,7 @@ const equipos = [
     </style>
   </head>
   <body>
-    <main>
+    <main class="entra">
       {equipos.map((e, i) => (
         <button style={`background:${e.color};--i:${i}`} data-color={e.color}>{e.titulo}</button>
       ))}
@@ -95,7 +97,21 @@ const equipos = [
           pantalla.hidden = false;
         })
       );
-      document.getElementById("volver")!.addEventListener("click", () => (pantalla.hidden = true));
+      const main = document.querySelector("main")!;
+      document.getElementById("volver")!.addEventListener("click", () => {
+        // sin animaciones (reducir movimiento) no hay animationend: cerrar directo
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) return (pantalla.hidden = true);
+        pantalla.classList.add("cerrando");
+        // reinicia la entrada de las tarjetas mientras se cierra el color
+        main.classList.remove("entra");
+        void main.offsetWidth;
+        main.classList.add("entra");
+      });
+      pantalla.addEventListener("animationend", (ev) => {
+        if (ev.animationName !== "cierra") return;
+        pantalla.hidden = true;
+        pantalla.classList.remove("cerrando");
+      });
     </script>
   </body>
 </html>
