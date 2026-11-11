@@ -1,0 +1,101 @@
+---
+// Edita aquí los equipos: título y color
+const equipos = [
+  { titulo: "Leones", color: "#e63946" },
+  { titulo: "Delfines", color: "#1d7bd8" },
+  { titulo: "Ranas", color: "#2a9d3f" },
+  { titulo: "Abejas", color: "#f4b400" },
+  { titulo: "Pulpos", color: "#8e44ad" },
+];
+---
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#111" />
+    <title>Equipos</title>
+    <style>
+      * { box-sizing: border-box; margin: 0; }
+      html, body { height: 100%; background: #111; font-family: system-ui, sans-serif; }
+      main {
+        height: 100dvh;
+        display: grid;
+        grid-template-rows: repeat(5, 1fr);
+        gap: 10px;
+        padding: 10px;
+      }
+      button {
+        border: 0;
+        border-radius: 18px;
+        color: #fff;
+        font: 800 clamp(1.6rem, 8vw, 3rem) system-ui, sans-serif;
+        text-shadow: 0 2px 6px rgb(0 0 0 / .35);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+      main button {
+        animation: entra .5s cubic-bezier(.34,1.56,.64,1) both;
+        animation-delay: calc(var(--i) * 80ms);
+        transition: transform .15s;
+      }
+      main button:active { transform: scale(.95); }
+      #pantalla:not([hidden]) { animation: abre .35s ease-out; }
+      #pantalla:not([hidden]) #titulo { animation: pop .6s .15s cubic-bezier(.34,1.56,.64,1) both, flota 2.5s 1s ease-in-out infinite; }
+      @keyframes entra { from { opacity: 0; transform: translateY(40px) scale(.9); } }
+      @keyframes abre { from { clip-path: circle(0 at var(--x, 50%) var(--y, 50%)); } to { clip-path: circle(150% at var(--x, 50%) var(--y, 50%)); } }
+      @keyframes pop { from { opacity: 0; transform: scale(.3) rotate(-8deg); } }
+      @keyframes flota { 50% { transform: translateY(-10px) scale(1.04); } }
+      @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+      #pantalla {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        font: 900 clamp(3rem, 18vw, 9rem) system-ui, sans-serif;
+        text-align: center;
+        text-shadow: 0 4px 12px rgb(0 0 0 / .35);
+        padding: 16px;
+      }
+      #pantalla[hidden] { display: none; }
+      #titulo { font-size: clamp(2.5rem, 13vw, 6rem); overflow-wrap: anywhere; }
+      #volver {
+        position: absolute;
+        top: max(16px, env(safe-area-inset-top));
+        left: 16px;
+        font-size: 1.2rem;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: rgb(0 0 0 / .3);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      {equipos.map((e, i) => (
+        <button style={`background:${e.color};--i:${i}`} data-color={e.color}>{e.titulo}</button>
+      ))}
+    </main>
+
+    <div id="pantalla" hidden>
+      <button id="volver">← Volver</button>
+      <h1 id="titulo"></h1>
+    </div>
+
+    <script>
+      const pantalla = document.getElementById("pantalla")!;
+      const titulo = document.getElementById("titulo")!;
+      document.querySelectorAll<HTMLButtonElement>("main button").forEach((b) =>
+        b.addEventListener("click", (ev) => {
+          // el círculo de color se abre desde donde tocaste
+          pantalla.style.setProperty("--x", ev.clientX + "px");
+          pantalla.style.setProperty("--y", ev.clientY + "px");
+          pantalla.style.background = b.dataset.color!;
+          titulo.textContent = b.textContent;
+          pantalla.hidden = false;
+        })
+      );
+      document.getElementById("volver")!.addEventListener("click", () => (pantalla.hidden = true));
+    </script>
+  </body>
+</html>
